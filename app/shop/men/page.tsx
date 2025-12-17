@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import DroviaHeader from '@/components/DroviaHeader';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
@@ -10,7 +9,6 @@ import { getAdminProducts } from '@/lib/adminProducts';
 import { Product } from '@/types';
 
 export default function MenCategoryPage() {
-  const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { Suspense, useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Search, ShoppingCart, Heart, Menu, X, User, LogOut, ChevronDown, Wallet } from 'lucide-react';
@@ -40,7 +40,7 @@ const navCategories = [
   },
 ];
 
-export default function DroviaHeader() {
+function DroviaHeaderInner() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -482,6 +482,14 @@ export default function DroviaHeader() {
         products={products}
       />
     </>
+  );
+}
+
+export default function DroviaHeader() {
+  return (
+    <Suspense fallback={null}>
+      <DroviaHeaderInner />
+    </Suspense>
   );
 }
 

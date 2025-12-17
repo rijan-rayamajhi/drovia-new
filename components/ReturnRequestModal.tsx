@@ -131,8 +131,7 @@ export default function ReturnRequestModal({
         })
         .reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
-      const success = requestReturn(
-        order.id,
+const success = await requestReturn(        order.id,
         itemIds,
         reason,
         resolution,

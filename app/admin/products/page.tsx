@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Plus, Edit, Trash2, X, Search, Check, Upload, Image as ImageIcon, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,7 +14,7 @@ const AVAILABLE_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 const CATEGORIES = ['T-Shirts', 'Jackets', 'Shirts', 'Pants', 'Sweaters', 'Footwear', 'Hoodies', 'Accessories'];
 const GENDERS = ['men', 'women', 'unisex'];
 
-export default function AdminProductsPage() {
+function AdminProductsPageInner() {
   const searchParams = useSearchParams();
   const lowStockFilter = searchParams.get('filter') === 'low-stock';
 
@@ -860,5 +860,13 @@ export default function AdminProductsPage() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function AdminProductsPage() {
+  return (
+    <Suspense fallback={null}>
+      <AdminProductsPageInner />
+    </Suspense>
   );
 }

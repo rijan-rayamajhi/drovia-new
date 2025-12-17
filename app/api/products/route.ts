@@ -43,160 +43,149 @@ export async function GET(request: NextRequest) {
 
 // POST /api/products - Create new product (Admin only)
 export async function POST(request: NextRequest) {
-  try {
-    // Check admin authentication
-    const authResult = await requireAdmin(request);
-    if (authResult instanceof NextResponse) {
-      return authResult;
-    }
+  return requireAdmin(async (req: NextRequest, _user) => {
+    try {
+      await connectDB();
 
-    await connectDB();
+      const body = await req.json();
 
-    const body = await request.json();
-
-    // Check if SKU already exists
-    const existingProduct = await Product.findOne({ sku: body.sku });
-    if (existingProduct) {
-      return NextResponse.json(
-        { error: 'Product with this SKU already exists' },
-        { status: 400 }
-      );
-    }
-
-    // Create new product
-    const product = await Product.create(body);
-
-    return NextResponse.json({
-      ...product.toObject(),
-      id: product._id.toString(),
-      _id: undefined,
-    }, { status: 201 });
-  } catch (error: any) {
-    console.error('Error creating product:', error);
-
-    // Handle validation errors
-    if (error.name === 'ValidationError') {
-      const errors = Object.values(error.errors).map((err: any) => err.message);
-      return NextResponse.json(
-        { error: 'Validation failed', details: errors },
-        { status: 400 }
-      );
-    }
-
-    return NextResponse.json(
-      { error: 'Failed to create product', details: error.message },
-      { status: 500 }
-    );
-  }
-}
-
-// PUT /api/products - Update product (Admin only)
-export async function PUT(request: NextRequest) {
-  try {
-    // Check admin authentication
-    const authResult = await requireAdmin(request);
-    if (authResult instanceof NextResponse) {
-      return authResult;
-    }
-
-    await connectDB();
-
-    const body = await request.json();
-    const { id, ...updates } = body;
-
-    if (!id) {
-      return NextResponse.json(
-        { error: 'Product ID is required' },
-        { status: 400 }
-      );
-    }
-
-    // Check if updating SKU to an existing one
-    if (updates.sku) {
-      const existingProduct = await Product.findOne({
-        sku: updates.sku,
-        _id: { $ne: id }
-      });
+      // Check if SKU already exists
+      const existingProduct = await Product.findOne({ sku: body.sku });
       if (existingProduct) {
         return NextResponse.json(
           { error: 'Product with this SKU already exists' },
           { status: 400 }
         );
       }
-    }
 
-    const product = await Product.findByIdAndUpdate(
-      id,
-      updates,
-      { new: true, runValidators: true }
-    );
+      // Create new product
+      const createdProduct = await Product.create(body);
+      const product = Array.isArray(createdProduct) ? createdProduct[0] : createdProduct;
 
-    if (!product) {
+      return NextResponse.json({
+        ...product.toObject(),
+        id: product._id.toString(),
+        _id: undefined,
+      }, { status: 201 });
+    } catch (error: any) {
+      console.error('Error creating product:', error);
+
+      // Handle validation errors
+      if (error.name === 'ValidationError') {
+        const errors = Object.values(error.errors).map((err: any) => err.message);
+        return NextResponse.json(
+          { error: 'Validation failed', details: errors },
+          { status: 400 }
+        );
+      }
+
       return NextResponse.json(
-        { error: 'Product not found' },
-        { status: 404 }
+        { error: 'Failed to create product', details: error.message },
+        { status: 500 }
       );
     }
+  })(request);
+}
 
-    return NextResponse.json({
-      ...product.toObject(),
-      id: product._id.toString(),
-      _id: undefined,
-    });
-  } catch (error: any) {
-    console.error('Error updating product:', error);
+// PUT /api/products - Update product (Admin only)
+export async function PUT(request: NextRequest) {
+  return requireAdmin(async (req: NextRequest, _user) => {
+    try {
+      await connectDB();
 
-    if (error.name === 'ValidationError') {
-      const errors = Object.values(error.errors).map((err: any) => err.message);
+      const body = await req.json();
+      const { id, ...updates } = body;
+
+      if (!id) {
+        return NextResponse.json(
+          { error: 'Product ID is required' },
+          { status: 400 }
+        );
+      }
+
+      // Check if updating SKU to an existing one
+      if (updates.sku) {
+        const existingProduct = await Product.findOne({
+          sku: updates.sku,
+          _id: { $ne: id }
+        });
+        if (existingProduct) {
+          return NextResponse.json(
+            { error: 'Product with this SKU already exists' },
+            { status: 400 }
+          );
+        }
+      }
+
+      const product = await Product.findByIdAndUpdate(
+        id,
+        updates,
+        { new: true, runValidators: true }
+      );
+
+      if (!product) {
+        return NextResponse.json(
+          { error: 'Product not found' },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({
+        ...product.toObject(),
+        id: product._id.toString(),
+        _id: undefined,
+      });
+    } catch (error: any) {
+      console.error('Error updating product:', error);
+
+      if (error.name === 'ValidationError') {
+        const errors = Object.values(error.errors).map((err: any) => err.message);
+        return NextResponse.json(
+          { error: 'Validation failed', details: errors },
+          { status: 400 }
+        );
+      }
+
       return NextResponse.json(
-        { error: 'Validation failed', details: errors },
-        { status: 400 }
+        { error: 'Failed to update product', details: error.message },
+        { status: 500 }
       );
     }
-
-    return NextResponse.json(
-      { error: 'Failed to update product', details: error.message },
-      { status: 500 }
-    );
-  }
+  })(request);
 }
 
 // DELETE /api/products - Delete product (Admin only)
 export async function DELETE(request: NextRequest) {
-  try {
-    // Check admin authentication
-    const authResult = await requireAdmin(request);
-    if (authResult instanceof NextResponse) {
-      return authResult;
-    }
+  return requireAdmin(async (req: NextRequest, _user) => {
+    try {
+      await connectDB();
 
-    await connectDB();
+      const { searchParams } = new URL(req.url);
+      const id = searchParams.get('id');
 
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
+      if (!id) {
+        return NextResponse.json(
+          { error: 'Product ID is required' },
+          { status: 400 }
+        );
+      }
 
-    if (!id) {
+      const product = await Product.findByIdAndDelete(id);
+
+      if (!product) {
+        return NextResponse.json(
+          { error: 'Product not found' },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({ message: 'Product deleted successfully' });
+    } catch (error: any) {
+      console.error('Error deleting product:', error);
       return NextResponse.json(
-        { error: 'Product ID is required' },
-        { status: 400 }
+        { error: 'Failed to delete product', details: error.message },
+        { status: 500 }
       );
     }
-
-    const product = await Product.findByIdAndDelete(id);
-
-    if (!product) {
-      return NextResponse.json(
-        { error: 'Product not found' },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({ message: 'Product deleted successfully' });
-  } catch (error: any) {
-    console.error('Error deleting product:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete product', details: error.message },
-      { status: 500 }
-    );
-  }
+  })(request);
 }

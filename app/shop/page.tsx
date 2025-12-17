@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import DroviaHeader from '@/components/DroviaHeader';
 import Footer from '@/components/Footer';
@@ -12,7 +12,7 @@ import { Product } from '@/types';
 const categories = ['All', 'T-Shirts', 'Jackets', 'Shirts', 'Pants', 'Sweaters', 'Footwear', 'Hoodies'];
 const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
 
-export default function ShopPage() {
+function ShopPageInner() {
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -229,6 +229,14 @@ export default function ShopPage() {
       </div>
       <Footer />
     </div>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense fallback={null}>
+      <ShopPageInner />
+    </Suspense>
   );
 }
 

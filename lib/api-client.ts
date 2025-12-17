@@ -47,10 +47,23 @@ export async function apiRequest<T>(
 ): Promise<T> {
   const token = getAuthToken();
   
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...options.headers,
   };
+
+  if (options.headers) {
+    if (options.headers instanceof Headers) {
+      options.headers.forEach((value, key) => {
+        headers[key] = value;
+      });
+    } else if (Array.isArray(options.headers)) {
+      for (const [key, value] of options.headers) {
+        headers[key] = value;
+      }
+    } else {
+      Object.assign(headers, options.headers);
+    }
+  }
 
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
@@ -92,7 +105,7 @@ export async function apiRequestFormData<T>(
 ): Promise<T> {
   const token = getAuthToken();
   
-  const headers: HeadersInit = {};
+  const headers: Record<string, string> = {};
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }

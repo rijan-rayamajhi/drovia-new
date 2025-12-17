@@ -31,7 +31,7 @@ export default function CancelRequestModal({
     setError('');
 
     try {
-      const success = requestCancel(order.id, reason.trim() || undefined);
+      const success = await requestCancel(order.id, reason.trim() || undefined);
       if (success) {
         onSuccess();
         onClose();

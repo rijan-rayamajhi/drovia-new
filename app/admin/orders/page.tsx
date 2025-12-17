@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Search, Eye, X, Calendar, Download, Package, Truck, Printer, AlertTriangle, RefreshCw, Check, XCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -33,7 +33,7 @@ const statusColors: Record<string, string> = {
 
 const statusOptions = ['All', 'Pending', 'Processing', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled', 'Cancel Requested', 'Return Requested', 'Return Approved', 'Return Completed'];
 
-export default function AdminOrdersPage() {
+function AdminOrdersPageInner() {
   const searchParams = useSearchParams();
   const viewOrderId = searchParams.get('view');
 
@@ -1499,5 +1499,13 @@ export default function AdminOrdersPage() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function AdminOrdersPage() {
+  return (
+    <Suspense fallback={null}>
+      <AdminOrdersPageInner />
+    </Suspense>
   );
 }

@@ -12,6 +12,8 @@ export interface Product {
   sizes?: string[];
   inStock?: boolean;
   featured?: boolean;
+  new?: boolean;
+  collection?: string;
 }
 
 export interface CartItem {

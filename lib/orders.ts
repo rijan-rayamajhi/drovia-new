@@ -1,6 +1,6 @@
 'use client';
 
-import { Order, CartItem } from '@/types';
+import { Order, CartItem, OrderItem } from '@/types';
 
 const ORDERS_STORAGE_KEY = 'userOrders';
 

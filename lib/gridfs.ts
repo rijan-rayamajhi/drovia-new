@@ -126,12 +126,14 @@ export async function getImageMetadata(fileId: string): Promise<any> {
       throw new Error('Image not found');
     }
 
+    const file = files[0] as any;
+
     return {
-      filename: files[0].filename,
-      length: files[0].length,
-      uploadDate: files[0].uploadDate,
-      contentType: files[0].contentType,
-      metadata: files[0].metadata
+      filename: file.filename,
+      length: file.length,
+      uploadDate: file.uploadDate,
+      contentType: file.contentType ?? file.metadata?.contentType,
+      metadata: file.metadata
     };
   } catch (error) {
     console.error('Error getting image metadata:', error);

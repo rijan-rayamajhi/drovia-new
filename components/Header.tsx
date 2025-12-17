@@ -34,8 +34,8 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    const updateCounts = () => {
-      setCartCount(getCartCount());
+    const updateCounts = async () => {
+      setCartCount(await getCartCount());
       setWishlistCount(getWishlistCount());
     };
     updateCounts();
@@ -48,16 +48,35 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
     // Close account menu when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       if (isAccountMenuOpen && !target.closest('.account-menu-container')) {
         setIsAccountMenuOpen(false);
-        setIsScrolled(window.scrollY > 20);
-      };
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isAccountMenuOpen]);
+
+  const handleLogout = async () => {
+    await logoutUser();
+    setIsLoggedIn(false);
+    setUser(null);
+    setIsAccountMenuOpen(false);
+    router.push('/');
+  };
 
   return (
     <header

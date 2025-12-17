@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Button from '@/components/Button';
@@ -24,7 +24,7 @@ const DEMO_ADMIN = {
   password: 'admin123',
 };
 
-export default function UnifiedLoginPage() {
+function UnifiedLoginPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/';
@@ -251,6 +251,14 @@ export default function UnifiedLoginPage() {
       </div>
       <Footer />
     </div>
+  );
+}
+
+export default function UnifiedLoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <UnifiedLoginPageInner />
+    </Suspense>
   );
 }
 
