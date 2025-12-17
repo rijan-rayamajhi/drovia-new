@@ -12,7 +12,9 @@ export async function GET(
     const metadata = await getImageMetadata(id);
     const buffer = await getImageBuffer(id);
 
-    return new NextResponse(buffer, {
+    const body = new Uint8Array(buffer);
+
+    return new NextResponse(body, {
       headers: {
         'Content-Type': metadata.contentType || 'image/jpeg',
         'Content-Length': metadata.length.toString(),
