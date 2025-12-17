@@ -27,7 +27,19 @@ const DEMO_ADMIN = {
 function UnifiedLoginPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirect') || '/';
+
+  const getSafeRedirect = (value: string | null): string => {
+    if (!value) return '/';
+    const trimmed = value.trim();
+    if (!trimmed.startsWith('/')) return '/';
+    if (trimmed.startsWith('//')) return '/';
+    if (trimmed.includes('://')) return '/';
+    return trimmed;
+  };
+
+  const rawRedirect = searchParams.get('redirect');
+  const redirectTo = getSafeRedirect(rawRedirect);
+  const hasExplicitRedirect = !!rawRedirect;
   
   const [formData, setFormData] = useState({
     emailOrUsername: '',
@@ -41,10 +53,10 @@ function UnifiedLoginPageInner() {
     // Check if already authenticated
     if (isUserAuthenticated()) {
       router.push(redirectTo);
-    } else if (isAdminAuthenticated()) {
+    } else if (isAdminAuthenticated() && !hasExplicitRedirect) {
       router.push('/admin');
     }
-  }, [router, redirectTo]);
+  }, [router, redirectTo, hasExplicitRedirect]);
 
   // Detect login type based on input
   useEffect(() => {
