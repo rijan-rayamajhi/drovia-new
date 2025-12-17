@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply antialiased;
+  }
+  
+  body {
+    @apply bg-ivory text-text-primary;
+    font-family: 'Inter', 'Poppins', system-ui, sans-serif;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', 'Inter', serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Luxury Button Variants */
+  .btn-primary {
+    @apply bg-accent text-white px-8 py-4 rounded-xl font-medium text-[15px] tracking-wide;
+    @apply transition-all duration-[520ms];
+    @apply hover:shadow-luxury hover:-translate-y-0.5;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2;
+    @apply active:translate-y-0 active:shadow-medium;
+    box-shadow: 0 4px 12px rgba(15, 76, 129, 0.15);
+    transition-timing-function: cubic-bezier(0.2, 0.9, 0.12, 1);
+  }
+  
+  .btn-primary:hover {
+    box-shadow: 0 8px 24px rgba(15, 76, 129, 0.25), 0 0 0 1px rgba(212, 175, 55, 0.3);
+  }
+  
+  .btn-secondary {
+    @apply border-2 border-accent text-accent bg-transparent px-8 py-4 rounded-xl font-medium text-[15px] tracking-wide;
+    @apply transition-all duration-500 ease-out;
+    @apply hover:bg-accent hover:text-white hover:shadow-luxury hover:-translate-y-0.5;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2;
+    @apply active:translate-y-0;
+  }
+  
+  .btn-ghost {
+    @apply text-text-primary px-6 py-3 rounded-lg font-medium text-[15px];
+    transition: all 350ms ease-out;
+    @apply hover:bg-surface hover:underline hover:underline-offset-4;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2;
+  }
+  
+  /* Luxury Input Fields */
+  .input-field {
+    @apply w-full px-5 py-4 bg-surface border border-gray-200 rounded-xl;
+    @apply text-text-primary placeholder:text-text-muted;
+    transition: all 350ms ease-out;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent;
+    @apply focus:shadow-soft;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+  }
+  
+  .input-field:focus {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02), 0 0 0 3px rgba(15, 76, 129, 0.1);
+  }
+  
+  /* Luxury Product Card */
+  .product-card {
+    @apply bg-surface rounded-2xl overflow-hidden cursor-pointer;
+    @apply transition-all duration-500 ease-out;
+    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.06);
+  }
+  
+  .product-card:hover {
+    @apply -translate-y-1;
+    box-shadow: 0 20px 40px rgba(16, 24, 40, 0.12);
+    transform: translateY(-4px) scale(1.02);
+  }
+  
+  /* Glass Effect */
+  .glass-effect {
+    @apply bg-white/80 backdrop-blur-md;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  
+  /* Section Spacing */
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8 xl:px-20;
+    @apply py-16 md:py-24 lg:py-32;
+  }
+  
+  .container-max {
+    @apply max-w-7xl mx-auto;
+  }
+  
+  /* Luxury Card */
+  .luxury-card {
+    @apply bg-surface rounded-2xl p-8 md:p-10;
+    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.06);
+    @apply transition-all duration-500 ease-out;
+  }
+  
+  .luxury-card:hover {
+    box-shadow: 0 20px 40px rgba(16, 24, 40, 0.1);
+  }
+  
+  /* Status Badges */
+  .status-badge {
+    @apply px-4 py-2 rounded-full text-sm font-medium;
+    transition: all 350ms ease-out;
+  }
+  
+  /* Toast Notification */
+  .toast {
+    @apply fixed bottom-6 right-6 z-50;
+    @apply bg-surface rounded-xl shadow-luxury p-4 min-w-[300px];
+    @apply animate-slide-up;
+    @apply border-l-4;
+  }
+  
+  /* Page Transition */
+  .page-transition {
+    @apply animate-fade-in;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
