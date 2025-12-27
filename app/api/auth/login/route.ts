@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createToken } from '@/lib/auth-middleware';
 import { getUserByEmail } from '@/lib/db/users';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
     const dbUser = await getUserByEmail(emailOrUsername);
     if (dbUser) {
-      const isValid = await bcrypt.compare(password, dbUser.password);
+      const isValid = bcrypt.compareSync(password, dbUser.password);
       if (isValid) {
         user = {
           userId: dbUser._id.toString(),
