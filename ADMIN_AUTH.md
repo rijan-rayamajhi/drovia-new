@@ -5,8 +5,7 @@ The admin dashboard is now protected with authentication. Users must login with 
 
 ## Login Credentials
 
-**Username:** `admin`  
-**Password:** `admin123`
+Create a user with `role=admin` in the database and login with that user's email + password.
 
 ## Access Points
 
@@ -72,8 +71,8 @@ All admin routes are protected:
 
 1. Navigate to `/admin/login`
 2. Enter credentials:
-   - Username: `admin`
-   - Password: `admin123`
+   - Email: your admin user's email
+   - Password: your admin user's password
 3. Click "Login"
 4. You'll be redirected to the admin dashboard
 5. Access all admin features

@@ -11,19 +11,6 @@ import { Lock, Mail, User, Shield } from 'lucide-react';
 import { isUserAuthenticated, loginUser } from '@/lib/userAuth';
 import { isAdminAuthenticated } from '@/lib/auth';
 
-// Demo credentials
-const DEMO_USER = {
-  email: 'user@demo.com',
-  password: 'user123',
-  name: 'Demo User',
-  phone: '+91 98765 43210',
-};
-
-const DEMO_ADMIN = {
-  username: 'admin',
-  password: 'admin123',
-};
-
 function UnifiedLoginPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -78,46 +65,43 @@ function UnifiedLoginPageInner() {
     const emailOrUsername = formData.emailOrUsername.trim();
     const password = formData.password.trim();
 
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
     try {
-      // Check if it's admin credentials
-      if (
-        emailOrUsername === DEMO_ADMIN.username &&
-        password === DEMO_ADMIN.password
-      ) {
-        localStorage.setItem('adminAuth', 'true');
-        localStorage.setItem('adminUser', emailOrUsername);
-        
-        if (localStorage.getItem('adminAuth') === 'true') {
-          window.location.href = '/admin';
-          return;
-        } else {
-          setError('Failed to save authentication. Please try again.');
-          setLoading(false);
-          return;
-        }
-      }
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emailOrUsername, password }),
+      });
 
-      // Check if it's user credentials
-      if (
-        emailOrUsername === DEMO_USER.email &&
-        password === DEMO_USER.password
-      ) {
-        loginUser({
-          id: Date.now().toString(),
-          name: DEMO_USER.name,
-          email: DEMO_USER.email,
-          phone: DEMO_USER.phone,
-        });
-        router.push(redirectTo);
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Login failed');
+        setLoading(false);
         return;
       }
 
-      // Invalid credentials
-      setError('Invalid credentials. Please check your email/username and password.');
-      setLoading(false);
+      if (data.user.role === 'admin') {
+        localStorage.removeItem('userAuth');
+        localStorage.removeItem('user');
+        localStorage.setItem('adminAuth', 'true');
+        localStorage.setItem('adminUser', data.user.name);
+        window.location.href = '/admin';
+      } else {
+        localStorage.removeItem('adminAuth');
+        localStorage.removeItem('adminUser');
+        loginUser({
+          id: Date.now().toString(),
+          name: data.user.name,
+          email: data.user.email,
+          phone: undefined,
+        });
+
+        localStorage.removeItem('cartItems');
+        localStorage.removeItem('wishlistItems');
+        localStorage.removeItem('userWallet');
+
+        router.push(redirectTo);
+      }
     } catch (err) {
       setError('An error occurred. Please try again.');
       setLoading(false);
@@ -232,31 +216,6 @@ function UnifiedLoginPageInner() {
                   Sign up
                 </Link>
               </p>
-            </div>
-
-            {/* Demo Credentials */}
-            <div className="mt-6 space-y-3">
-              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-xs font-semibold text-blue-900 mb-2 flex items-center gap-2">
-                  <User className="w-4 h-4" />
-                  User Portal Demo:
-                </p>
-                <div className="text-xs text-blue-800 space-y-1">
-                  <p>Email: <code className="bg-white px-2 py-1 rounded">user@demo.com</code></p>
-                  <p>Password: <code className="bg-white px-2 py-1 rounded">user123</code></p>
-                </div>
-              </div>
-
-              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-                <p className="text-xs font-semibold text-purple-900 mb-2 flex items-center gap-2">
-                  <Shield className="w-4 h-4" />
-                  Admin Dashboard Demo:
-                </p>
-                <div className="text-xs text-purple-800 space-y-1">
-                  <p>Username: <code className="bg-white px-2 py-1 rounded">admin</code></p>
-                  <p>Password: <code className="bg-white px-2 py-1 rounded">admin123</code></p>
-                </div>
-              </div>
             </div>
           </motion.div>
         </div>

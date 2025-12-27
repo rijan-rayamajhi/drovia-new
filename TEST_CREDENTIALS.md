@@ -15,8 +15,7 @@ The system automatically detects whether you're logging in as a **User** or **Ad
 ## 👤 User Portal Account
 
 **Credentials:**
-- **Email:** `user@demo.com`
-- **Password:** `user123`
+- Configure a real user in your database (or register via `/register`).
 
 **Access:** After login, redirected to User Portal (homepage)
 
@@ -32,8 +31,7 @@ The system automatically detects whether you're logging in as a **User** or **Ad
 ## 🔐 Admin Dashboard Account
 
 **Credentials:**
-- **Username:** `admin`
-- **Password:** `admin123`
+- Create a user with `role=admin` in the database and login with that user's email + password.
 
 **Access:** After login, redirected to Admin Dashboard at `/admin`
 
@@ -50,22 +48,22 @@ The system automatically detects whether you're logging in as a **User** or **Ad
 
 ### Testing User Portal:
 1. Navigate to `/login`
-2. Enter email: `user@demo.com`
-3. Enter password: `user123`
+2. Enter your user email
+3. Enter your password
 4. Click "Login"
 5. You'll be redirected to the homepage
 6. You can now shop, add to cart, and checkout
 
 ### Testing Admin Dashboard:
 1. Navigate to `/login`
-2. Enter username: `admin` (no email format)
-3. Enter password: `admin123`
+2. Enter your admin user's email
+3. Enter your password
 4. Click "Login"
 5. You'll be redirected to `/admin` dashboard
 6. Access all admin features
 
 ### Testing Checkout Flow:
-1. Login as user (`user@demo.com` / `user123`)
+1. Login as a user
 2. Add items to cart
 3. Go to cart page
 4. Click "Proceed to Checkout"
@@ -78,8 +76,8 @@ The system automatically detects whether you're logging in as a **User** or **Ad
 
 The unified login page automatically detects account type:
 
-- **Type "user@demo.com"** → Shows "Email Address" label with email icon
-- **Type "admin"** → Shows "Username" label with shield icon
+- **Type an email address** → Shows "Email Address" label with email icon
+- **Type a non-email value** → Shows "Username" label with shield icon
 - **Empty field** → Shows "Email or Username" label
 
 ---
